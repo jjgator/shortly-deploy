@@ -3,6 +3,17 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     concat: {
+      dist: {
+        src: [
+          'public/lib/*.js',
+          'public/client/*.js',
+          'server-config.js',
+          'server.js',
+          'app/collections/*.js',
+          'app/models/*.js'
+        ],
+        dest:'public/dist/built.js'
+      }
     },
 
     mochaTest: {
@@ -21,6 +32,11 @@ module.exports = function(grunt) {
     },
 
     uglify: {
+      prod: {
+        files: {
+          'public/style.min.css': ['public/style.css']
+        }
+      }
     },
 
     eslint: {
@@ -51,6 +67,7 @@ module.exports = function(grunt) {
 
     shell: {
       prodServer: {
+        command: 'git push live master'
       }
     },
   });
@@ -87,9 +104,14 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.registerTask('deploy', [
-    // add your deploy tasks here
-  ]);
+  grunt.registerTask('minify', function() {
+    grunt.task.run(['uglify']);
+  })
+  grunt.registerTask('deploy', ['shell']);
+
+  grunt.registerTask('start', function() {
+    grunt.task.run(['nodemon']);
+  });
 
 
 };
